@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<title> Weather App </title>
+<!-- Coder: Syed Sharizal
+-->
+
+<head>
+    <style>
+        div.hide {
+            display: none;
+        }
+    </style>
+    <!-- Bootstrap 4-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+</head>
+
+<body>
+    <h1>Weather App</h1>
+    <p id="getLoc">Click the button to get your position.
+
+        <button onclick="getLocation()">Get Location via HTML5 Geolocation</button></p>
+
+    <div id="map"></div>
+
+    <p><img id="icon" src=""></p>
+    <div>
+        <p><span id="temp"></span><span id="desc"></span>
+            <div class="tempUnit hide"><button id="buttonTemp" onclick="tempForC('C')">Fahrenheit/Celsius</button></div>
+        </p>
+    </div>
+    <p><span id="city"></span> <span id="country"></span></p>
+
+    <script>
+        debugger;
+        var x = document.getElementById("getLoc");
+
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(showPosition);
+            } else {
+                x.innerHTML = "Geolocation is not supported by this browser.";
+            }
+        }
+
+        function showPosition(position) {
+            var latlon = position.coords.latitude + "," + position.coords.longitude;
+            var img_url = "https://maps.googleapis.com/maps/api/staticmap?center=" +
+                latlon + "&zoom=14&size=400x300&key=AIzaSyBu-916DdpKAjTmJNIgngS6HL_kDIKU0aU";
+            document.getElementById("map").innerHTML = "<img src='" + img_url + "'>";
+            var lat = "lat=" + position.coords.latitude;
+            var lon = "lon=" + position.coords.longitude;
+            getWeather(lat, lon);
+        }
+
+        function getWeather(lat, lon) {
+            var api = "https://fcc-weather-api.glitch.me/api/current?";
+            var urlString = api + lat + "&" + lon;
+            $.ajax({
+                url: urlString,
+                success: function(result) {
+                    $("#city").text(result.name + ", ");
+                    $("#country").text(result.sys.country);
+                    currentTempInCelsius = Math.round(result.main.temp * 10) / 10;
+                    $("#temp").text(currentTempInCelsius + String.fromCharCode(176) + "C  ");
+                    $("#desc").text(result.weather[0].main);
+                    $("#icon").attr("src", result.weather[0].icon);
+                }
+
+            });
+            $('div.tempUnit').removeClass('hide');
+        }
+
+        function tempForC(unit) {
+            if (unit === "C") {
+                var arry;
+                var y;
+                arry = document.getElementById("temp").textContent.split(String.fromCharCode(176));
+                y = arry[0] * 9 / 5 + 32;
+                document.getElementById("temp").textContent = Math.round(y) + String.fromCharCode(176) + "F  ";
+                document.getElementById("buttonTemp").attributes.onclick.value = "tempForC('F')"
+            } else {
+                arry = document.getElementById("temp").textContent.split(String.fromCharCode(176));
+                y = (arry[0] - 32) * 5 / 9;
+                document.getElementById("temp").textContent = Math.round(y) + String.fromCharCode(176) + "C  ";
+                document.getElementById("buttonTemp").attributes.onclick.value = "tempForC('C')"
+            }
+        }
+    </script>
+</body>
+
+</html>
