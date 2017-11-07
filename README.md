@@ -6,4 +6,4 @@ Feature:
 * Can see a different icon image depending on the weather.
 * Can push a button to toggle between Fahrenheit and Celsius.
 
-![WeatherApp Result](\image\weather-app.PNG) 
+![WeatherApp Result](Weather-App/image/weather-app.PNG) 
